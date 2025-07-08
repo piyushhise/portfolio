@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:portfolio/awards_screen.dart';
 
 class CertificationScreen extends StatefulWidget {
   const CertificationScreen({super.key});
@@ -93,9 +94,15 @@ class _CertificationScreenState extends State<CertificationScreen> {
                     onPressed: () {
                       if (hasCertification == "yes" &&
                           _formKey.currentState!.validate()) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("Certification Saved")),
-                        );
+                        if (_formKey.currentState!.validate()) {
+                   Navigator.push(
+                    context,
+                     MaterialPageRoute(
+                      builder: (context) => const AwardAndAchievementsScreen(),
+                     ),
+                   );
+                  }
+
                       } else if (hasCertification == "no") {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text("No Certifications")),

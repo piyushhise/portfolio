@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:portfolio/skills_page.dart';
 import 'education_info.dart'; 
 
 class SocialMediaScreen extends StatefulWidget {
@@ -59,11 +60,11 @@ class _SocialMediaScreenState extends State<SocialMediaScreen> {
                 ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
-                      // Navigate to Education Page
+                      
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const EducationInfo(),
+                          builder: (context) => const SkillsPage(),
                         ),
                       );
                     }
