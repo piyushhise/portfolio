@@ -12,84 +12,86 @@ class SkillsPage extends StatefulWidget {
 class _SkillsPageState extends State<SkillsPage> {
   List<bool?> selectedValues = List<bool?>.filled(skills.length, false);
   List<String> selectedSkills = [];
-  String? selectedRatings;
+  Map<String, String> skillRatings = {};
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFFFDF4FF),
       appBar: AppBar(
-        title: Text(
-          'skills',
+        title: const Text(
+          'Skills Page',
           style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
             color: Colors.white,
+            fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: const Color.fromARGB(255, 28, 5, 91),
+        backgroundColor: const Color.fromARGB(255, 42, 20, 103),
         elevation: 5,
         centerTitle: true,
       ),
       body: SafeArea(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 25, top: 10),
+            const Padding(
+              padding: EdgeInsets.only(left: 25, top: 20, bottom: 10),
               child: Text(
                 '3. Select Skills',
                 style: TextStyle(
-                  color: Colors.black54,
+                  color: Colors.black,
                   fontSize: 17,
                   fontWeight: FontWeight.w600,
                 ),
               ),
             ),
-
             Expanded(
               child: ListView.builder(
                 itemCount: skills.length,
                 itemBuilder: (context, index) {
                   final skill = skills[index];
+                  final isSelected = selectedValues[index] ?? false;
+
                   return Card(
-                    color: Colors.white,
+                    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadiusGeometry.circular(15),
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    margin: EdgeInsets.all(8),
+                    elevation: 2,
                     child: Column(
                       children: [
                         CheckboxListTile(
                           title: Text(skill),
-                          value: selectedValues[index],
-                          activeColor: Colors.purple,
+                          value: isSelected,
+                          activeColor: Colors.deepPurple,
                           checkColor: Colors.white,
                           controlAffinity: ListTileControlAffinity.leading,
-                          side: BorderSide(color: Colors.purple),
                           onChanged: (value) {
                             setState(() {
                               selectedValues[index] = value;
-                              selectedValues[index] ?? false
-                                  ? selectedSkills.add(skill)
-                                  : selectedSkills.remove(skill);
+                              if (value == true) {
+                                selectedSkills.add(skill);
+                                skillRatings[skill] = ratings.first;
+                              } else {
+                                selectedSkills.remove(skill);
+                                skillRatings.remove(skill);
+                              }
                             });
                           },
                         ),
-                        if (selectedValues[index] ?? false)
+                        if (isSelected)
                           Column(
                             children: ratings.map((rating) {
                               return RadioListTile<String>(
                                 title: Text(rating),
                                 value: rating,
-                                groupValue: selectedRatings,
+                                groupValue: skillRatings[skill],
                                 onChanged: (value) {
                                   setState(() {
-                                    selectedRatings = value;
+                                    skillRatings[skill] = value!;
                                   });
                                 },
                                 activeColor: Colors.purple,
-                                toggleable: false,
                               );
                             }).toList(),
                           ),
@@ -102,24 +104,28 @@ class _SkillsPageState extends State<SkillsPage> {
             Center(
               child: ElevatedButton(
                 onPressed: () {
+                  
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => EducationInfo()),
+                    MaterialPageRoute(builder: (context) => const EducationInfo()),
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.purple.shade500,
+                  backgroundColor: Colors.deepPurple,
                   foregroundColor: Colors.white,
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 10,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Text("Next Page", style: TextStyle(fontSize: 13)),
+                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
                 ),
+                child: const Text("Next Page", style: TextStyle(fontSize: 14)),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 20),
           ],
-        )));}}
+        ),
+      ),
+    );
+  }
+}
+

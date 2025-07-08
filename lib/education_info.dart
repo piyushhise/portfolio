@@ -13,9 +13,13 @@ class _EducationInfoState extends State<EducationInfo> {
 
   final degreeController = TextEditingController();
   final institutionController = TextEditingController();
-  final startyearController = TextEditingController();
-  final endyearController = TextEditingController();
   final experienceController = TextEditingController();
+
+  String? startYear;
+  String? endYear;
+
+  final List<String> years =
+      List.generate(30, (index) => (2000 + index).toString());
 
   @override
   Widget build(BuildContext context) {
@@ -58,18 +62,30 @@ class _EducationInfoState extends State<EducationInfo> {
                     validatorMsg: "Enter your institution name",
                   ),
                   const SizedBox(height: 20),
-                  _buildInputField(
-                    label: "Start Year",
-                    icon: Icons.calendar_today,
-                    controller: startyearController,
-                    validatorMsg: "Enter your start year",
+                  CustomDropDown(
+                    labelText: "Start Year",
+                    hintText: "Select Your Start Year",
+                    items: years,
+                    value: startYear,
+                    onChanged: (value) {
+                      setState(() {
+                        startYear = value;
+                      });
+                    },
+                    icon: Icons.calendar_month_outlined,
                   ),
                   const SizedBox(height: 20),
-                  _buildInputField(
-                    label: "End Year",
-                    icon: Icons.calendar_today,
-                    controller: endyearController,
-                    validatorMsg: "Enter your end year",
+                  CustomDropDown(
+                    labelText: "End Year",
+                    hintText: "Select Your End Year",
+                    items: years,
+                    value: endYear,
+                    onChanged: (value) {
+                      setState(() {
+                        endYear = value;
+                      });
+                    },
+                    icon: Icons.calendar_month_outlined,
                   ),
                   const SizedBox(height: 20),
                   _buildInputField(
@@ -79,32 +95,31 @@ class _EducationInfoState extends State<EducationInfo> {
                     validatorMsg: "Enter years of experience",
                   ),
                   const SizedBox(height: 30),
-
                   ElevatedButton(
-  onPressed: () {
-    if (_formKey.currentState!.validate()) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const WorkExperience(),
-        ),
-      );
-    }
-  },
-  style: ElevatedButton.styleFrom(
-    backgroundColor: Colors.deepPurple,
-    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(12),
-    ),
-    elevation: 8,
-  ),
-  child: const Text(
-    "Continue",
-    style: TextStyle(fontSize: 16, color: Colors.white),
-  ),
-),
-
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const WorkExperience(),
+                          ),
+                        );
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.deepPurple,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 40, vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 8,
+                    ),
+                    child: const Text(
+                      "Continue",
+                      style: TextStyle(fontSize: 16, color: Colors.white),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -143,6 +158,62 @@ class _EducationInfoState extends State<EducationInfo> {
         validator: (value) {
           if (value == null || value.isEmpty) {
             return validatorMsg;
+          }
+          return null;
+        },
+      ),
+    );
+  }
+}
+
+class CustomDropDown extends StatelessWidget {
+  final String labelText;
+  final String hintText;
+  final List<String> items;
+  final String? value;
+  final void Function(String?) onChanged;
+  final IconData icon;
+
+  const CustomDropDown({
+    super.key,
+    required this.labelText,
+    required this.hintText,
+    required this.items,
+    required this.onChanged,
+    required this.icon,
+    this.value,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 8,
+            offset: Offset(2, 2),
+          ),
+        ],
+      ),
+      child: DropdownButtonFormField<String>(
+        value: value,
+        decoration: InputDecoration(
+          labelText: labelText,
+          prefixIcon: Icon(icon),
+          border: InputBorder.none,
+        ),
+        hint: Text(hintText),
+        items: items
+            .map((item) => DropdownMenuItem(value: item, child: Text(item)))
+            .toList(),
+        onChanged: onChanged,
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return "Please select $labelText";
           }
           return null;
         },
