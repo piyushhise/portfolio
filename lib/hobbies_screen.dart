@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:portfolio/contact_screen.dart';
+import 'package:portfolio/data/appdata.dart';
 
 class HobbiesAndInterestsScreen extends StatefulWidget {
   const HobbiesAndInterestsScreen({super.key});
 
   @override
-  State<HobbiesAndInterestsScreen> createState() => _HobbiesAndInterestsScreenState();
+  State<HobbiesAndInterestsScreen> createState() =>
+      _HobbiesAndInterestsScreenState();
 }
 
-class _HobbiesAndInterestsScreenState extends State<HobbiesAndInterestsScreen> {
+class _HobbiesAndInterestsScreenState
+    extends State<HobbiesAndInterestsScreen> {
   final _formKey = GlobalKey<FormState>();
-  final hobbiesController = TextEditingController();
+  final otherHobbyController = TextEditingController();
+
+  List<bool?> selectedValues = List<bool?>.filled(hobbies.length, false);
+  List<String> selectedHobbies = [];
 
   @override
   Widget build(BuildContext context) {
@@ -25,32 +31,85 @@ class _HobbiesAndInterestsScreenState extends State<HobbiesAndInterestsScreen> {
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Form(
-            key: _formKey,
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  const CircleAvatar(
-                    radius: 70,
-                    backgroundImage: NetworkImage(
-                      "https://epe.brightspotcdn.com/dims4/default/75a0bb5/2147483647/strip/true/crop/884x600+95+0/resize/840x570!/quality/90/?url=https%3A%2F%2Fepe-brightspot.s3.us-east-1.amazonaws.com%2Fe3%2F9d%2F5725af984dce8e6db0ba690f9b29%2F052024-story-embed-cosn-data-lead-art-langreo-vs.png",
-                    ),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Padding(
+                padding: EdgeInsets.only(left: 25, top: 20, bottom: 10),
+                child: Text(
+                  '3. Select hobbies',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 17,
+                    fontWeight: FontWeight.w600,
                   ),
-                  const SizedBox(height: 30),
-                  _buildInputField(
-                    label: "List your hobbies & interests (comma separated)",
-                    controller: hobbiesController,
+                ),
+              ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: hobbies.length,
+                  itemBuilder: (context, index) {
+                    final hobby = hobbies[index];
+                    final isSelected = selectedValues[index] ?? false;
+
+                    return Card(
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 8),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 2,
+                      child: CheckboxListTile(
+                        title: Text(hobby),
+                        value: isSelected,
+                        activeColor: Colors.deepPurple,
+                        checkColor: Colors.white,
+                        controlAffinity: ListTileControlAffinity.leading,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedValues[index] = value;
+                            if (value == true) {
+                              selectedHobbies.add(hobby);
+                            } else {
+                              selectedHobbies.remove(hobby);
+                            }
+                          });
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ),
+
+              
+              if (selectedHobbies.contains("Other"))
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  child: _buildInputField(
+                    label: "Enter other hobbies",
+                    controller: otherHobbyController,
                     icon: Icons.sports_handball,
-                    validatorMsg: "Please enter at least one hobby",
-                    maxLines: 4,
+                    validatorMsg: "Please enter your custom hobby",
+                    maxLines: 2,
                   ),
-                  const SizedBox(height: 30),
-                  ElevatedButton(
+                ),
+
+              const SizedBox(height: 10),
+              Center(
+                child: ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
-                      
+                      // Add custom hobby if entered
+                      if (selectedHobbies.contains("Other") &&
+                          otherHobbyController.text.isNotEmpty) {
+                        selectedHobbies
+                            .add(otherHobbyController.text.trim());
+                      }
+
+                     
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -59,22 +118,23 @@ class _HobbiesAndInterestsScreenState extends State<HobbiesAndInterestsScreen> {
                       );
                     }
                   },
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-                      backgroundColor: Colors.deepPurple,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      elevation: 8,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 40, vertical: 16),
+                    backgroundColor: Colors.deepPurple,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Text(
-                      "Continue",
-                      style: TextStyle(fontSize: 16, color: Colors.white),
-                    ),
+                    elevation: 8,
                   ),
-                ],
+                  child: const Text(
+                    "Continue",
+                    style: TextStyle(fontSize: 16, color: Colors.white),
+                  ),
+                ),
               ),
-            ),
+              const SizedBox(height: 20),
+            ],
           ),
         ),
       ),
@@ -110,7 +170,8 @@ class _HobbiesAndInterestsScreenState extends State<HobbiesAndInterestsScreen> {
           contentPadding: const EdgeInsets.all(16),
         ),
         validator: (value) {
-          if (value == null || value.trim().isEmpty) {
+          if (selectedHobbies.contains("Other") &&
+              (value == null || value.trim().isEmpty)) {
             return validatorMsg;
           }
           return null;

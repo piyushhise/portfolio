@@ -28,3 +28,24 @@ final List<String> skills = [
 ];
 
 final List<String> ratings =['Beginner', 'Intermediate','Advanced'];
+List<String> hobbies = [
+  "Reading",
+  "Writing",
+  "Traveling",
+  "Photography",
+  "Cooking",
+  "Gardening",
+  "Dancing",
+  "Singing",
+  "Gaming",
+  "Hiking",
+  "Cycling",
+  "Swimming",
+  "Blogging",
+  "Coding",
+  "Crafting",
+  "Playing Musical Instruments",
+  "Watching Movies"
+  "Volunteering"
+  "Other",
+];
