@@ -13,10 +13,11 @@ class _WorkExperienceState extends State<WorkExperience> {
 
   final jobTitleController = TextEditingController();
   final companyNameController = TextEditingController();
-  final startDateController = TextEditingController();
-  final endDateController = TextEditingController();
   final yearsOfExperienceController = TextEditingController();
   final responsibilitiesController = TextEditingController();
+
+  String? startDate;
+  String? endDate;
 
   @override
   Widget build(BuildContext context) {
@@ -59,18 +60,34 @@ class _WorkExperienceState extends State<WorkExperience> {
                     validatorMsg: "Enter company name",
                   ),
                   const SizedBox(height: 20),
-                  _buildInputField(
+                  _buildDatePickerField(
                     label: "Start Date",
-                    controller: startDateController,
+                    value: startDate,
                     icon: Icons.calendar_today,
-                    validatorMsg: "Enter start date",
+                    onTap: () => _pickDate(
+                      context: context,
+                      label: "Start Date",
+                      onSelectedDate: (date) {
+                        setState(() {
+                          startDate = date;
+                        });
+                      },
+                    ),
                   ),
                   const SizedBox(height: 20),
-                  _buildInputField(
+                  _buildDatePickerField(
                     label: "End Date",
-                    controller: endDateController,
+                    value: endDate,
                     icon: Icons.calendar_today,
-                    validatorMsg: "Enter end date",
+                    onTap: () => _pickDate(
+                      context: context,
+                      label: "End Date",
+                      onSelectedDate: (date) {
+                        setState(() {
+                          endDate = date;
+                        });
+                      },
+                    ),
                   ),
                   const SizedBox(height: 20),
                   _buildInputField(
@@ -89,16 +106,17 @@ class _WorkExperienceState extends State<WorkExperience> {
                   ),
                   const SizedBox(height: 30),
                   ElevatedButton(
-  onPressed: () {
-    if (_formKey.currentState!.validate()) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const ProjectPortfolioScreen(),
-        ),
-      );
-    }
-  },
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                const ProjectPortfolioScreen(),
+                          ),
+                        );
+                      }
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.deepPurple,
                       padding: const EdgeInsets.symmetric(
@@ -158,5 +176,61 @@ class _WorkExperienceState extends State<WorkExperience> {
         },
       ),
     );
+  }
+
+  Widget _buildDatePickerField({
+    required String label,
+    required String? value,
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 8,
+            offset: Offset(2, 2),
+          ),
+        ],
+      ),
+      child: TextFormField(
+        readOnly: true,
+        onTap: onTap,
+        controller: TextEditingController(text: value ?? ''),
+        decoration: InputDecoration(
+          labelText: label,
+          prefixIcon: Icon(icon),
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.all(16),
+        ),
+        validator: (val) {
+          if (val == null || val.isEmpty) {
+            return 'Please select $label';
+          }
+          return null;
+        },
+      ),
+    );
+  }
+
+  Future<void> _pickDate({
+    required BuildContext context,
+    required String label,
+    required void Function(String) onSelectedDate,
+  }) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1990),
+      lastDate: DateTime(2050),
+    );
+
+    if (picked != null) {
+      final formattedDate = "${picked.day}/${picked.month}/${picked.year}";
+      onSelectedDate(formattedDate);
+    }
   }
 }

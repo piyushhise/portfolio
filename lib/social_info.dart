@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:portfolio/skills_page.dart';
-import 'education_info.dart'; 
+
 
 class SocialMediaScreen extends StatefulWidget {
   const SocialMediaScreen({super.key});
